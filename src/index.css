@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*** SWIPE LIST OVERRIDES **/
+.swipeable-list-item__leading-actions, 
+.swipeable-list-item__trailing-actions {
+  @apply text-white text-lg uppercase font-bold;
+}
+.swipeable-list-item__leading-actions{
+  @apply bg-emerald-600;
+}
+.swipeable-list-item__trailing-actions {
+  @apply bg-pink-600;
+}
+.swipeable-list .swipe-action {
+  @apply flex justify-center items-center
+}
+
+/*** DATEPICKER OVERRIDE **/
+
+.react-calendar {
+  background-color: #f1f5f9; 
+  border: none;
+  border-radius: 0.5rem; 
+  padding: 0.5rem;
+}
+
+.dark .react-calendar {
+  background-color: #1e293b; 
+  color: #e2e8f0; 
+}
+
+.react-calendar__tile {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.react-calendar__tile:enabled:hover {
+  background-color: #3b82f6; 
+  color: white;
+}
+
+.react-calendar__tile--active {
+  background-color: #2563eb; 
+  color: white;
+}
+
+.react-calendar__navigation button {
+  color: #2563eb; 
+  font-size: 1.25rem;
+}
+
+.dark .react-calendar__navigation button {
+  color: #60a5fa; 
+}
+
+.react-calendar__navigation button:disabled {
+  color: #9ca3af; 
+}
+
+.dark .react-date-picker__clear-button, 
+.dark .react-date-picker__calendar-button  {
+  filter: invert(1);
+}
