@@ -40,10 +40,9 @@ export default function ExpenseForm() {
     const handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
 
-        const isAmpuntField = ['amount'].includes(name)
         setExpense({
             ...expense,
-            [name]: isAmpuntField ? Number(value) : value
+            [name]: value 
         })
     }
 
@@ -61,6 +60,8 @@ export default function ExpenseForm() {
             return
         }
 
+        //Convertir amount a number
+        expense.amount = Number(expense.amount)
 
         //Agregar o actualizar un  gasto
         if(state.editingId){
@@ -119,6 +120,7 @@ export default function ExpenseForm() {
                     name="amount"
                     value={expense.amount}
                     onChange={handleChange}
+                    min={0}
                 />
             </div>
 
