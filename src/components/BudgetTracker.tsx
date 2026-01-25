@@ -47,14 +47,17 @@ export default function BudgetTracker() {
                 <AmountDisplay
                     label="Presupuesto"
                     amount={state.budget}
+                    currency={state.currency}
                 />
                 <AmountDisplay
                     label="Disponible"
                     amount={remainingBudget}
+                    currency={state.currency}
                 />
                 <AmountDisplay
                     label="Gastado"
                     amount={totalExpenses}
+                    currency={state.currency}
                 />
 
             </div>

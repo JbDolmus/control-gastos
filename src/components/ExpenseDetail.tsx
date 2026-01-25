@@ -15,7 +15,7 @@ export default function ExpenseDetail({ expense }: ExpenseDetailProps) {
 
     const categoryInfo = useMemo(() => categories.filter(cat => cat.id === expense.category)[0], [expense])
 
-    const { dispatch } = useBudget()
+    const { state, dispatch } = useBudget()
 
     const leadingActions = () => (
         <LeadingActions>
@@ -61,6 +61,7 @@ export default function ExpenseDetail({ expense }: ExpenseDetailProps) {
 
                     <AmountDisplay
                         amount={expense.amount}
+                        currency={state.currency}
                     />
                 </div>
             </SwipeableListItem>

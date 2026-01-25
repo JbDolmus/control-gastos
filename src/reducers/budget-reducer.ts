@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Category, DraftExpense, Expense } from "../types"
 
 export type BudgetActions =
-    { type: 'add-budget', payload: { budget: number } } |
+    { type: 'add-budget', payload: { budget: number, currency: string } } |
     { type: 'show-modal' } |
     { type: 'close-modal' } |
     { type: 'add-expense', payload: { expense: DraftExpense } } |
@@ -15,6 +15,7 @@ export type BudgetActions =
 
 export type BudgetState = {
     budget: number,
+    currency: string,
     modal: boolean,
     expenses: Expense[],
     editingId: Expense['id'],
@@ -26,6 +27,11 @@ const initialBudget = (): number => {
     return localStorageBudget ? +localStorageBudget : 0
 }
 
+const initialCurrency = (): string => {
+    const localStorageCurrency = localStorage.getItem('currency')
+    return localStorageCurrency ? localStorageCurrency : ''
+}
+
 const localStorageExpenses = (): Expense[] => {
     const localStorageExpenses = localStorage.getItem('expenses')
     return localStorageExpenses ? JSON.parse(localStorageExpenses) : []
@@ -33,6 +39,7 @@ const localStorageExpenses = (): Expense[] => {
 
 export const initialState: BudgetState = {
     budget: initialBudget(),
+    currency: initialCurrency(),
     modal: false,
     expenses: localStorageExpenses(),
     editingId: '',
@@ -55,7 +62,8 @@ export const budgetReducer = (
 
         return {
             ...state,
-            budget: action.payload.budget
+            budget: action.payload.budget,
+            currency: action.payload.currency
         }
     }
 

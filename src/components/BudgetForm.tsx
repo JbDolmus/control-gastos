@@ -1,23 +1,33 @@
 import { ChangeEvent, FormEvent, useMemo, useState } from "react"
 import { useBudget } from "../hooks/useBudget"
+import { currencies } from "../data/currencies"
+import { Currency } from "../types"
+
 
 export default function BudgetForm() {
 
     const [budget, setBudget] = useState(0)
+    const [currency, setCurrency] = useState<Currency["code"]>("")
+
     const { dispatch } = useBudget()
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setBudget(e.target.valueAsNumber)
     }
 
+    const handleCurrencyChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        setCurrency(e.target.value as Currency["code"])
+    }
+
+
     const isValid = useMemo(() => {
-        return isNaN(budget) || budget <= 0
-    }, [budget])
+        return isNaN(budget) || budget <= 0 || currency === ''
+    }, [budget, currency])
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        dispatch({ type: 'add-budget', payload: { budget } })
+        dispatch({ type: 'add-budget', payload: { budget, currency } })
     }
 
     return (
@@ -28,6 +38,20 @@ export default function BudgetForm() {
                 </label>
             </div>
 
+            <select
+                className="w-full bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-800 p-2 dark:text-slate-200"
+                value={currency}
+                onChange={handleCurrencyChange}
+            >
+                <option value="">-- Seleccione una moneda --</option>
+                {currencies.map(curr => (
+                    <option key={curr.code} value={curr.code}>
+                        {curr.name} ({curr.symbol})
+                    </option>
+                ))}
+            </select>
+
+
             <input
                 id="budget"
                 type="number"
@@ -36,6 +60,7 @@ export default function BudgetForm() {
                 name="budget"
                 value={budget}
                 onChange={handleChange}
+                min={0}
             />
 
             <input

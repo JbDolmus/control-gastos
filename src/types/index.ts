@@ -18,3 +18,9 @@ export type Category = {
     name: string,
     icon: string
 }
+
+export type Currency = {
+    code: string,
+    name: string,
+    symbol: string
+}
