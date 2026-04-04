@@ -6,6 +6,7 @@ import 'react-calendar/dist/Calendar.css';
 import { DraftExpense, Value } from "../types";
 import ErrorMessage from "./ErrorMessage";
 import { useBudget } from "../hooks/useBudget";
+import { showAlert } from "../alerts";
 
 
 
@@ -22,13 +23,13 @@ export default function ExpenseForm() {
     const { state, dispatch, remainingBudget } = useBudget()
     const [previousAmount, setPreviousAmount] = useState(0)
 
-    useEffect(()=> {
-        if(state.editingId){
-            const editingExpense = state.expenses.filter( currentExpense => currentExpense.id === state.editingId)[0]
+    useEffect(() => {
+        if (state.editingExpenseId) {
+            const editingExpense = state.expenses.filter(currentExpense => currentExpense.id === state.editingExpenseId)[0]
             setExpense(editingExpense)
             setPreviousAmount(editingExpense.amount)
         }
-    }, [state.editingId])
+    }, [state.editingExpenseId])
 
     const handleChageDate = (value: Value) => {
         setExpense({
@@ -42,7 +43,7 @@ export default function ExpenseForm() {
 
         setExpense({
             ...expense,
-            [name]: value 
+            [name]: value
         })
     }
 
@@ -55,8 +56,13 @@ export default function ExpenseForm() {
             return
         }
 
-        if ( (expense.amount - previousAmount) > remainingBudget) {
+        if ((expense.amount - previousAmount) > remainingBudget) {
             setError("Ese gasto se sale del presupuesto")
+            return
+        }
+
+        if (expense.amount <= 0) {
+            setError("El monto del gasto debe ser mayor a 0")
             return
         }
 
@@ -64,12 +70,14 @@ export default function ExpenseForm() {
         expense.amount = Number(expense.amount)
 
         //Agregar o actualizar un  gasto
-        if(state.editingId){
-            dispatch({ type: 'update-expense', payload: { expense:{ id: state.editingId, ...expense} } })
-        }else{
+        if (state.editingExpenseId) {
+            dispatch({ type: 'update-expense', payload: { expense: { id: state.editingExpenseId, ...expense } } })
+            showAlert("Gasto actualizado exitosamente", "success")
+        } else {
             dispatch({ type: 'add-expense', payload: { expense } })
+            showAlert("Gasto agregado exitosamente", "success")
         }
-        
+
 
         //Reiniciar el state
         setExpense({
@@ -79,12 +87,13 @@ export default function ExpenseForm() {
             date: new Date()
         })
         setPreviousAmount(0)
+        setError('')
     }
 
     return (
         <form action="" className="space-y-5" onSubmit={handleSubmit}>
             <legend className="uppercase text-center text-2xl font-black border-b-4 border-blue-500 py-5 dark:text-white">
-                {state.editingId ? 'Guardar Cambio' : 'Nuevo Gasto'}
+                {state.editingExpenseId ? 'Editar Gasto' : 'Nuevo Gasto'}
             </legend>
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -163,7 +172,7 @@ export default function ExpenseForm() {
 
             <input type="submit"
                 className="bg-blue-600 cursor-pointer w-full p-2 text-white uppercase font-bold rounded-lg"
-                value={state.editingId ? 'Guardar Cambios' : 'Registrar Gasto'}
+                value={state.editingExpenseId ? 'Guardar Cambios' : 'Registrar Gasto'}
             />
         </form>
     )

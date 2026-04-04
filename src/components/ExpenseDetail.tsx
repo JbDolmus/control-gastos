@@ -3,9 +3,10 @@ import { LeadingActions, SwipeableList, SwipeableListItem, SwipeAction, Trailing
 import { formatDate } from "../helpers"
 import { Expense } from "../types"
 import AmountDisplay from "./AmountDisplay"
-import { categories } from "../data/categories"
 import 'react-swipeable-list/dist/styles.css'
 import { useBudget } from "../hooks/useBudget"
+import Swal from "sweetalert2"
+import { showAlert } from "../alerts"
 
 type ExpenseDetailProps = {
     expense: Expense
@@ -13,14 +14,33 @@ type ExpenseDetailProps = {
 
 export default function ExpenseDetail({ expense }: ExpenseDetailProps) {
 
-    const categoryInfo = useMemo(() => categories.filter(cat => cat.id === expense.category)[0], [expense])
+    
 
     const { state, dispatch } = useBudget()
+    const categoryInfo = useMemo(() => state.categories.filter(cat => cat.id === expense.category)[0], [expense])
+
+    const removeExpense = () => {
+        Swal.fire({
+            title: "¿Estás seguro de eliminar este gasto?",
+            text: "Esta acción no se puede deshacer",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Eliminar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch({ type: 'remove-expense', payload: { id: expense.id } })
+                showAlert("Gasto eliminado exitosamente", "success")
+            }
+        });
+    }
 
     const leadingActions = () => (
         <LeadingActions>
             <SwipeAction
-                onClick={() => dispatch({type: 'get-expense-by-id', payload: {id: expense.id}})}
+                onClick={() => dispatch({ type: 'get-expense-by-id', payload: { id: expense.id } })}
             >
                 Actualizar
             </SwipeAction>
@@ -30,8 +50,7 @@ export default function ExpenseDetail({ expense }: ExpenseDetailProps) {
     const trailingActions = () => (
         <TrailingActions>
             <SwipeAction
-                onClick={() => dispatch({type: 'remove-expense', payload: {id: expense.id}})}
-                destructive={true}
+                onClick={removeExpense}
             >
                 Eliminar
             </SwipeAction>
@@ -43,7 +62,7 @@ export default function ExpenseDetail({ expense }: ExpenseDetailProps) {
             <SwipeableListItem
                 maxSwipe={1}
                 leadingActions={leadingActions()}
-                trailingActions={ trailingActions() }
+                trailingActions={trailingActions()}
             >
                 <div className="bg-white dark:bg-slate-900 shadow-lg p-5 w-full border-b border-gray-200 dark:border-slate-700 flex gap-5 items-center">
                     <div>

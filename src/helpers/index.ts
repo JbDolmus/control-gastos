@@ -27,3 +27,12 @@ export function formatDate(dateStr: string): string {
     }
     return new Intl.DateTimeFormat('es-Es', options).format(dateObj)
 }
+
+export function getImagePath(imagePath: string) {
+    const cloudinaryBaseUrl = "https://res.cloudinary.com";
+    if(imagePath.startsWith(cloudinaryBaseUrl)) {
+        return imagePath;
+    }else{
+        return `icono_${imagePath}.svg`;
+    }
+}

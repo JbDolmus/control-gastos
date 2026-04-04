@@ -1,11 +1,10 @@
 import { ChangeEvent } from "react";
-import { categories } from "../data/categories";
 import { useBudget } from "../hooks/useBudget";
 
 
 export default function FilterByCategory() {
 
-    const { dispatch } = useBudget()
+    const { state,dispatch } = useBudget()
 
     const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
         dispatch({ type: 'add-filter-category', payload: { id: e.target.value } })
@@ -22,7 +21,7 @@ export default function FilterByCategory() {
                         onChange={handleChange}
                     >
                         <option value="">--Todas las categorías--</option>
-                        {categories.map(category => (
+                        {state.categories.map(category => (
                             <option value={category.id} key={category.id}>
                                 {category.name}
                             </option>

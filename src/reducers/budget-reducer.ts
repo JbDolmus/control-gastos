@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Category, DraftExpense, Expense } from "../types"
+import { Category, DraftCategory, DraftExpense, Expense } from "../types"
+import { categories as initialCategories } from "../data/categories"
 
 export type BudgetActions =
     { type: 'add-budget', payload: { budget: number, currency: string } } |
@@ -10,7 +11,11 @@ export type BudgetActions =
     { type: 'get-expense-by-id', payload: { id: Expense['id'] } } |
     { type: 'update-expense', payload: { expense: Expense } } |
     { type: 'restart-app' } |
-    { type: 'add-filter-category', payload: {id: Category['id']} } 
+    { type: 'add-filter-category', payload: { id: Category['id'] } } |
+    { type: 'add-category', payload: { category: DraftCategory } } |
+    { type: 'remove-category', payload: { id: Category['id'] } } |
+    { type: 'get-category-by-id', payload: { id: Category['id'] } } |
+    { type: 'update-category', payload: { category: Category } }
 
 
 export type BudgetState = {
@@ -18,7 +23,9 @@ export type BudgetState = {
     currency: string,
     modal: boolean,
     expenses: Expense[],
-    editingId: Expense['id'],
+    categories: Category[],
+    editingExpenseId: Expense['id'],
+    editingCategoryId: Category['id'],
     currentCategory: Category['id']
 }
 
@@ -37,18 +44,32 @@ const localStorageExpenses = (): Expense[] => {
     return localStorageExpenses ? JSON.parse(localStorageExpenses) : []
 }
 
+const localStorageCategories = (): Category[] => {
+    const localStorageCategories = localStorage.getItem('categories')
+    return localStorageCategories ? JSON.parse(localStorageCategories) : initialCategories
+}
+
 export const initialState: BudgetState = {
     budget: initialBudget(),
     currency: initialCurrency(),
     modal: false,
     expenses: localStorageExpenses(),
-    editingId: '',
+    categories: localStorageCategories(),
+    editingExpenseId: '',
+    editingCategoryId: '',
     currentCategory: ''
 }
 
 const createExpense = (draftExpense: DraftExpense): Expense => {
     return {
         ...draftExpense,
+        id: uuidv4()
+    }
+}
+
+const createCategory = (draftCategory: DraftCategory): Category => {
+    return {
+        ...draftCategory,
         id: uuidv4()
     }
 }
@@ -78,7 +99,7 @@ export const budgetReducer = (
         return {
             ...state,
             modal: false,
-            editingId: ''
+            editingExpenseId: ''
         }
     }
 
@@ -102,7 +123,7 @@ export const budgetReducer = (
     if (action.type === 'get-expense-by-id') {
         return {
             ...state,
-            editingId: action.payload.id,
+            editingExpenseId: action.payload.id,
             modal: true
         }
     }
@@ -112,7 +133,7 @@ export const budgetReducer = (
             ...state,
             expenses: state.expenses.map(expense => expense.id === action.payload.expense.id ? action.payload.expense : expense),
             modal: false,
-            editingId: ''
+            editingExpenseId: ''
         }
     }
 
@@ -120,7 +141,8 @@ export const budgetReducer = (
         return {
             ...state,
             budget: 0,
-            expenses: []
+            expenses: [],
+            currency: ''
         }
     }
 
@@ -130,6 +152,46 @@ export const budgetReducer = (
             currentCategory: action.payload.id
         }
     }
+
+    if (action.type === 'add-category') {
+        const category = createCategory(action.payload.category)
+        return {
+            ...state,
+            categories: [...state.categories, category],
+            modal: false
+        }
+    }
+
+    if (action.type === 'remove-category') {
+        return {
+            ...state,
+            categories: state.categories.filter(
+                category => category.id !== action.payload.id
+            )
+        }
+    }
+
+    if (action.type === 'get-category-by-id') {
+        return {
+            ...state,
+            editingCategoryId: action.payload.id,
+            modal: true
+        }
+    }
+
+    if (action.type === 'update-category') {
+        return {
+            ...state,
+            categories: state.categories.map(category =>
+                category.id === action.payload.category.id
+                    ? action.payload.category
+                    : category
+            ),
+            editingCategoryId: '',
+            modal: false
+        }
+    }
+
 
     return state
 }

@@ -3,6 +3,7 @@ import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
 import { useBudget } from '../hooks/useBudget'
 import ExpenseForm from './ExpenseForm'
+import { Tooltip } from 'react-tooltip'
 
 export default function ExpenseModal() {
 
@@ -10,14 +11,21 @@ export default function ExpenseModal() {
 
     return (
         <>
-            <div className="fixed right-5 bottom-5 flex items-center justify-center">
+
+            <div className="fixed right-7 bottom-5 flex items-center justify-center">
                 <button
                     type="button"
+                    data-tooltip-id="add-tooltip"
+                    data-tooltip-content="Agregar gasto"
                     onClick={() => dispatch({ type: 'show-modal' })}
                 >
                     <PlusCircleIcon className='w-16 h-16 text-blue-600 rounded-full' />
                 </button>
             </div>
+            <Tooltip
+                id="add-tooltip"
+                className="dark:!bg-slate-200 dark:!text-slate-900 !rounded-lg !px-3 !py-2 !text-sm !shadow-lg"
+            />
 
             <Transition appear show={state.modal} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={() => { dispatch({ type: 'close-modal' }) }}>

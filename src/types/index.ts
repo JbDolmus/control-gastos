@@ -19,6 +19,8 @@ export type Category = {
     icon: string
 }
 
+export type DraftCategory = Omit<Category, 'id'>
+
 export type Currency = {
     code: string,
     name: string,
