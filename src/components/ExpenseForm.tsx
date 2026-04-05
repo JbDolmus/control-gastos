@@ -1,5 +1,4 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { categories } from "../data/categories";
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
@@ -148,7 +147,7 @@ export default function ExpenseForm() {
                     onChange={handleChange}
                 >
                     <option value="">-- Seleccione --</option>
-                    {categories.map(category => (
+                    {state.categories.map(category => (
                         <option key={category.id} value={category.id}>
                             {category.name}
                         </option>
