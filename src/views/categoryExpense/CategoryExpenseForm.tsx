@@ -52,11 +52,10 @@ export default function CategoryExpenseForm() {
         setCategory(prev => ({ ...prev, name: e.target.value }))
     }
 
-
     return (
         <form action="" className="space-y-5" onSubmit={handleSubmit}>
             <legend className="uppercase text-center text-2xl font-black border-b-4 border-blue-500 py-5 dark:text-white">
-                {state.editingExpenseId ? 'Editar categoría de gasto' : 'Nueva categoría de gasto'}
+                {state.editingCategoryId ? 'Editar categoría de gasto' : 'Nueva categoría de gasto'}
             </legend>
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -84,7 +83,7 @@ export default function CategoryExpenseForm() {
 
             <input type="submit"
                 className="bg-blue-600 cursor-pointer w-full p-2 text-white uppercase font-bold rounded-lg"
-                value={state.editingExpenseId ? 'Actualizar Categoría' : 'Guardar Categoría'}
+                value={state.editingCategoryId ? 'Actualizar Categoría' : 'Guardar Categoría'}
             />
         </form>
     )

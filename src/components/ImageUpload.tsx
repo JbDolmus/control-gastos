@@ -44,7 +44,7 @@ export default function ImageUpload({ image, setImage }: ImageUploadProps) {
     return (
         <div className="flex flex-col gap-4">
             <label className="text-xl dark:text-slate-200">
-                Ícono de la categoría:
+                Icono de la categoría:
             </label>
 
             <input
